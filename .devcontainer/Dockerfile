@@ -1,0 +1,15 @@
+# From Cell Line to Command Line — course environment (R 4.4 / Bioconductor 3.19, RStudio Server)
+FROM bioconductor/bioconductor_docker:RELEASE_3_19
+
+# Course packages (binary installs from Bioconductor's container repo where available), then GitHub-only ones and data packages.
+RUN Rscript -e 'BiocManager::install(c("ComplexHeatmap", "GEOquery", "Homo.sapiens", "ISLR", "Polychrome", "R.utils", "RColorBrewer", "RcppML", "Seurat", "SingleCellExperiment", "TxDb.Hsapiens.UCSC.hg19.knownGene", "ade4", "annotatr", "bayestestR", "circlize", "conflicted", "datasauRus", "dendextend", "dendsort", "devtools", "doParallel", "docopt", "dplyr", "fastICA", "ggdist", "ggplot2", "ggpubr", "ggthemes", "glmnet", "gplots", "here", "janitor", "jsonlite", "knitr", "nycflights13", "patchwork", "plotly", "plsmod", "purrr", "qvalue", "readxl", "rmarkdown", "scCustomize", "scales", "sparseMatrixStats", "stringr", "tibble", "tidymodels", "tidyr", "tidyverse", "vip", "xfun", "zellkonverter"), ask = FALSE, update = FALSE, Ncpus = 4)' \
+ && Rscript -e 'remotes::install_github(c("crazyhottommy/scclusteval", "genomicsclass/GSE5859Subset", "mojaveazure/seurat-disk", "satijalab/seurat-data"), upgrade = "never")' \
+ && Rscript -e 'try(SeuratData::InstallData("pbmc3k"), silent = TRUE); cat("pbmc3k:", requireNamespace("pbmc3k.SeuratData", quietly = TRUE), "\n")' \
+ && Rscript -e 'try({ proc <- basilisk::basiliskStart(zellkonverter::zellkonverterAnnDataEnv()); basilisk::basiliskStop(proc) }, silent = TRUE); cat("zellkonverter python env prepared\n")' \
+ && Rscript -e 'ok <- vapply(c("ComplexHeatmap", "GEOquery", "GSE5859Subset", "Homo.sapiens", "ISLR", "Polychrome", "R.utils", "RColorBrewer", "RcppML", "Seurat", "SeuratData", "SeuratDisk", "SingleCellExperiment", "TxDb.Hsapiens.UCSC.hg19.knownGene", "ade4", "annotatr", "bayestestR", "circlize", "conflicted", "datasauRus", "dendextend", "dendsort", "devtools", "doParallel", "docopt", "dplyr", "fastICA", "ggdist", "ggplot2", "ggpubr", "ggthemes", "glmnet", "gplots", "here", "janitor", "jsonlite", "knitr", "nycflights13", "patchwork", "plotly", "plsmod", "purrr", "qvalue", "readxl", "rmarkdown", "scCustomize", "scales", "scclusteval", "sparseMatrixStats", "stringr", "tibble", "tidymodels", "tidyr", "tidyverse", "vip", "xfun", "zellkonverter"), requireNamespace, logical(1), quietly = TRUE); if (!all(ok)) stop("missing: ", paste(names(ok)[!ok], collapse = " ")); cat("all course packages installed\n")' \
+ && rm -rf /tmp/downloaded_packages /tmp/Rtmp*
+
+# RStudio Server without a login page (rocker's /init configures it from DISABLE_AUTH/USER); open the course folder by default.
+RUN { echo; echo "session-default-working-dir=/workspaces/cl2cl-course-env"; echo "session-default-new-project-dir=/workspaces/cl2cl-course-env"; } >> /etc/rstudio/rsession.conf \
+ && echo "rstudio ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/rstudio && chmod 0440 /etc/sudoers.d/rstudio
+ENV DISABLE_AUTH=true USER=rstudio

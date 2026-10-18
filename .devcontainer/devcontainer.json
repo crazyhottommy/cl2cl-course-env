@@ -1,0 +1,42 @@
+{
+  "name": "From Cell Line to Command Line",
+  "image": "ghcr.io/crazyhottommy/cl2cl-course-env:latest",
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "remoteUser": "rstudio",
+  "overrideCommand": false,
+  "containerEnv": {
+    "DISABLE_AUTH": "true",
+    "USER": "rstudio"
+  },
+  "forwardPorts": [
+    8787
+  ],
+  "portsAttributes": {
+    "8787": {
+      "label": "RStudio",
+      "onAutoForward": "notify",
+      "requireLocalPort": false
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "ignore"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "REditorSupport.r",
+        "quarto.quarto"
+      ]
+    },
+    "codespaces": {
+      "openFiles": [
+        "README.md"
+      ]
+    }
+  },
+  "postCreateCommand": "bash download-data.sh cl2cl > data-download.log 2>&1 || echo 'data download failed \u2014 run: bash download-data.sh cl2cl'"
+}
