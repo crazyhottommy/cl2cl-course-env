@@ -23,7 +23,7 @@ Coming back later: the same button reopens your existing codespace (that's what 
 Prefer to own the repo (for example to push your notes to GitHub)? Click **Use this template → Create a new repository** first, then open a codespace on your copy; everything else is identical.
 
 ## On your own computer
-You don't need this repo. Install R ≥ 4.3 and RStudio, run `bash download-data.sh cl2cl` (or `source("download-data.R")`) from your project folder to fetch the data, and install the packages — `renv.lock` has the exact versions (`install.packages("renv"); renv::restore()`), or install them with `BiocManager::install()` as each chapter shows. The optional `BSgenome.Hsapiens.UCSC.hg19` (700 MB) used in a non-executed example is not preinstalled.
+You don't need this repo. Install R ≥ 4.3 and RStudio, run `bash download-data.sh cl2cl` (or `source("download-data.R")`) from your project folder to fetch the data, and install the packages — `renv.lock` has the exact versions (`install.packages("renv"); renv::restore()`), or install them with `BiocManager::install()` as each chapter shows. The optional `BSgenome.Hsapiens.UCSC.hg19` (700 MB) used in a non-executed example is not preinstalled. `vip` was archived from CRAN in July 2026; install it with `remotes::install_github("koalaverse/vip")`.
 
 ## What's in here
 - `.devcontainer/` — the Dockerfile that builds the image (`ghcr.io/crazyhottommy/cl2cl-course-env`) and the Codespace settings
